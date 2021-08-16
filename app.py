@@ -1,18 +1,19 @@
-from flask import Flask, render_template_string, request   # Importing the Flask modules required for this project
-import RPi.GPIO as GPIO     # Importing the GPIO library to control GPIO pins of Raspberry Pi
-from time import sleep      # Import sleep module from time library to add delays
+# import all necessary libraries 
+from flask import Flask, render_template_string, request
+import RPi.GPIO as GPIO
+from time import sleep
 GPIO.setwarnings(False)
-# Pins where we have connected servos
-GPIO.setmode(GPIO.BCM)      # We are using the BCM pin numbering
-# Declaring Servo Pins as output pins
+# BCM GPIO vs BOARD GPIO. We are using BCM here. 
+GPIO.setmode(GPIO.BCM)      
+# Pin where the relay is connected to
 GPIO.setup(2, GPIO.OUT)
 
-# Flask constructor takes the name of current module (__name__) as argument.
+# flask constructer 
 app = Flask(__name__)
-# Enable debug mode
+# Enable debug mode (this is optional, but useful if your application is having problems)
 app.config['DEBUG'] = True
 
-# Store HTML code
+# let's create a variable to store the HTML
 TPL = '''
 <html>
     <head><title>Web Application to control air conditioner water relief pump</title></head>
@@ -24,7 +25,7 @@ TPL = '''
 </html>
 '''
 
-# which URL should call the associated function.
+# Flask uses routing to navigate where the HTTP requests shall go
 @app.route("/")
 def home():
     return render_template_string(TPL)
@@ -38,13 +39,14 @@ def run():
 <a href="/turnoff" style='font-size:20px; font-family: arial;'>turn pump off</a></div>
 </html>
 '''
-    # Get slider Values
+    # turns water pump on
     GPIO.output(2, GPIO.HIGH)
 
     return returnPage
 
 @app.route("/turnoff")
 def turnoff():
+    #turns pump off
     GPIO.output(2, GPIO.LOW)
     returnPage1 = '''
 <html>
